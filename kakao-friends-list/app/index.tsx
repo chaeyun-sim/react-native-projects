@@ -31,7 +31,6 @@ export default function HomeScreen() {
           isMe
           {...myProfile}
         />
-        <Division />
         <FriendSection
           friendProfileLen={friendProfiles.length}
           onPress={onPressArrow}
