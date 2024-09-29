@@ -5,6 +5,7 @@ import Column from './Column';
 import Margin from './Margin';
 import ArrowButton from './ArrowButton';
 import { TodoItem } from '@/hooks/useTodoList';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface CalendarProps {
   selectedDate: Dayjs;
@@ -12,6 +13,7 @@ interface CalendarProps {
   onPressRightArrow: () => void;
   onPressHeaderDate: () => void;
   onPressDate: (date: Dayjs) => void;
+  onPressGoBack: () => void;
   todoList: TodoItem[];
 }
 
@@ -21,12 +23,13 @@ export default ({
   onPressRightArrow,
   onPressHeaderDate,
   onPressDate,
+  onPressGoBack,
   todoList,
 }: CalendarProps) => {
   const columns = getCalendarColumns(selectedDate);
 
   const ListHeaderComponent = () => {
-    const currentDateText = dayjs(selectedDate).format('YYYY.MM.DD');
+    const currentDateText = dayjs(selectedDate).format('YYYY.MM');
 
     return (
       <View>
@@ -43,6 +46,16 @@ export default ({
             name='arrow-right'
             onPress={onPressRightArrow}
           />
+          <TouchableOpacity
+            onPress={onPressGoBack}
+            style={{ position: 'absolute', right: 10 }}
+          >
+            <MaterialCommunityIcons
+              name='arrow-u-left-top'
+              size={24}
+              color='#404040'
+            />
+          </TouchableOpacity>
         </View>
         <Margin height={15} />
 

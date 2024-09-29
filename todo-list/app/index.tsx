@@ -36,6 +36,7 @@ export default function HomeScreen() {
     isModalOpen,
     onPressLeftArrow,
     onPressRightArrow,
+    onPressGoBack,
   } = useCalendar(now);
   const { todoList, originTodoList, addTodo, removeTodo, toggleTodo, resetInput, input, setInput } =
     useTodoList(selectedDate);
@@ -50,6 +51,7 @@ export default function HomeScreen() {
           onPressLeftArrow={onPressLeftArrow}
           onPressRightArrow={onPressRightArrow}
           onPressDate={setSelectedDate}
+          onPressGoBack={onPressGoBack}
           todoList={originTodoList}
         />
 

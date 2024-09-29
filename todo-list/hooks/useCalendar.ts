@@ -16,6 +16,10 @@ export const useCalendar = (now: Dayjs) => {
     setSelectedDate(dayjs(selectedDate).add(1, 'month'));
   };
 
+  const onPressGoBack = () => {
+    setSelectedDate(dayjs(now));
+  };
+
   return {
     selectedDate,
     setSelectedDate,
@@ -24,5 +28,6 @@ export const useCalendar = (now: Dayjs) => {
     hideDatePicker,
     onPressLeftArrow,
     onPressRightArrow,
+    onPressGoBack,
   };
 };
