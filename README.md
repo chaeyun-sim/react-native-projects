@@ -3,7 +3,7 @@
 
 
 ## Expo
-- [까까오톡 친구목록 클론코딩](https://github.com/chaeyun-sim/react-native-projects/tree/main/kakao-friends-list) (#
-- [계산기](https://github.com/chaeyun-sim/react-native-projects/tree/main/calculator)
-- [투두리스트 + 달력](https://github.com/chaeyun-sim/react-native-projects/tree/main/todo-list)
+- [PR #1](https://github.com/chaeyun-sim/react-native-projects/pull/1) | [까까오톡 친구목록 클론코딩](https://github.com/chaeyun-sim/react-native-projects/tree/main/kakao-friends-list)
+- [PR #2](https://github.com/chaeyun-sim/react-native-projects/pull/2) | [계산기](https://github.com/chaeyun-sim/react-native-projects/tree/main/calculator)
+- [PR #3](https://github.com/chaeyun-sim/react-native-projects/pull/3) | [투두리스트 + 달력](https://github.com/chaeyun-sim/react-native-projects/tree/main/todo-list)
 - 나만의 갤러리
