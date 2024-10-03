@@ -13,11 +13,14 @@ export const useGallery = () => {
   const [images, setImages] = useState<ImageItem[]>([]);
   const [selectedAlbum, setSelectedAlbum] = useState<AlbumItem>(defaultAlbum);
   const [albums, setAlbums] = useState<AlbumItem[]>([defaultAlbum]);
-  const [isInputModalOpen, setIsInputModalOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isBigImgModalOpen, setIsBigImgModalOpen] = useState(false);
   const [newAlbumTitle, setNewAlbumTitle] = useState('');
   const [selectedImage, setSelectedImage] = useState<ImageItem>();
+
+  const [isModalOpen, setIsModalOpen] = useState({
+    isInputModalOpen: false,
+    isDropdownOpen: false,
+    isBigImgModalOpen: false,
+  });
 
   useEffect(() => {
     initValues();
@@ -84,12 +87,12 @@ export const useGallery = () => {
     },
   ];
 
-  const openInputModal = () => setIsInputModalOpen(true);
-  const closeInputModal = () => setIsInputModalOpen(false);
-  const openDropdown = () => setIsDropdownOpen(true);
-  const closeDropdown = () => setIsDropdownOpen(false);
-  const openBigImgModal = () => setIsBigImgModalOpen(true);
-  const closeBigImgModal = () => setIsBigImgModalOpen(false);
+  const openInputModal = () => setIsModalOpen({ ...isModalOpen, isInputModalOpen: true });
+  const closeInputModal = () => setIsModalOpen({ ...isModalOpen, isInputModalOpen: false });
+  const openDropdown = () => setIsModalOpen({ ...isModalOpen, isDropdownOpen: true });
+  const closeDropdown = () => setIsModalOpen({ ...isModalOpen, isDropdownOpen: false });
+  const openBigImgModal = () => setIsModalOpen({ ...isModalOpen, isBigImgModalOpen: true });
+  const closeBigImgModal = () => setIsModalOpen({ ...isModalOpen, isBigImgModalOpen: false });
 
   const addAlbum = () => {
     const newAlbum = {
@@ -150,13 +153,11 @@ export const useGallery = () => {
     deleteImage,
     imagesWithAddButton,
     selectedAlbum,
-    isInputModalOpen,
+    isModalOpen,
     openInputModal,
     closeInputModal,
-    isDropdownOpen,
     openDropdown,
     closeDropdown,
-    isBigImgModalOpen,
     openBigImgModal,
     closeBigImgModal,
     newAlbumTitle,
