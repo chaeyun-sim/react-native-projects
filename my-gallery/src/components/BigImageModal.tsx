@@ -1,11 +1,12 @@
 import { Image, Modal, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { ImageItem } from '../types/types';
 import { SimpleLineIcons } from '@expo/vector-icons';
+import { useRecoilValue } from 'recoil';
+import { selectedImageState } from '../store/store';
 
 interface BigImageModalProps {
   isOpen: boolean;
   onClose: () => void;
-  selectedImage: ImageItem;
   onPressLeftButton: () => void;
   onPressRightButton: () => void;
   showPreviousArrow: boolean;
@@ -15,12 +16,13 @@ interface BigImageModalProps {
 export default ({
   isOpen,
   onClose,
-  selectedImage,
   onPressLeftButton,
   onPressRightButton,
   showPreviousArrow,
   showNextArrow,
 }: BigImageModalProps) => {
+  const selectedImage = useRecoilValue(selectedImageState);
+
   const ArrowButton = ({
     name,
     onPress,

@@ -7,22 +7,18 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import { useRecoilState } from 'recoil';
+import { newAlbumTitleState } from '../store/store';
 
 interface TextInputModalProps {
   isOpen: boolean;
   onClose: () => void;
-  newAlbumTitle: string;
-  setNewAlbumTitle: (value: string) => void;
   onSubmitEditing: () => void;
 }
 
-export default ({
-  isOpen,
-  onClose,
-  newAlbumTitle,
-  setNewAlbumTitle,
-  onSubmitEditing,
-}: TextInputModalProps) => {
+export default ({ isOpen, onClose, onSubmitEditing }: TextInputModalProps) => {
+  const [newAlbumTitle, setNewAlbumTitle] = useRecoilState(newAlbumTitleState);
+
   return (
     <Modal
       animationType='fade'

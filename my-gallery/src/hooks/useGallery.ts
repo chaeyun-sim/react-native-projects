@@ -1,8 +1,17 @@
 import * as ImagePicker from 'expo-image-picker';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AlbumItem, ImageItem } from '../types/types';
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  albumsState,
+  imagesWithAddButtonState,
+  modalStateAtom,
+  newAlbumTitleState,
+  selectedAlbumState,
+  selectedImageState,
+} from '../store/store';
 
 const defaultAlbum: AlbumItem = {
   id: -1,
@@ -11,16 +20,26 @@ const defaultAlbum: AlbumItem = {
 
 export const useGallery = () => {
   const [images, setImages] = useState<ImageItem[]>([]);
-  const [selectedAlbum, setSelectedAlbum] = useState<AlbumItem>(defaultAlbum);
-  const [albums, setAlbums] = useState<AlbumItem[]>([defaultAlbum]);
-  const [newAlbumTitle, setNewAlbumTitle] = useState('');
-  const [selectedImage, setSelectedImage] = useState<ImageItem>();
+  const [selectedAlbum, setSelectedAlbum] = useRecoilState(selectedAlbumState);
+  const [albums, setAlbums] = useRecoilState(albumsState);
+  const [selectedImage, setSelectedImage] = useRecoilState(selectedImageState);
+  const [modalState, setModalState] = useRecoilState(modalStateAtom);
+  const newAlbumTitle = useRecoilValue(newAlbumTitleState);
+  const setImagesWithAddButton = useSetRecoilState(imagesWithAddButtonState);
 
-  const [isModalOpen, setIsModalOpen] = useState({
-    isInputModalOpen: false,
-    isDropdownOpen: false,
-    isBigImgModalOpen: false,
-  });
+  const filteredImages = useMemo(() => {
+    return images.filter(image => image.albumId === selectedAlbum.id);
+  }, [images, selectedAlbum]);
+
+  useEffect(() => {
+    setImagesWithAddButton([
+      ...filteredImages,
+      {
+        id: -1,
+        uri: '',
+      },
+    ]);
+  }, [images, selectedAlbum.id]);
 
   useEffect(() => {
     initValues();
@@ -29,19 +48,17 @@ export const useGallery = () => {
   const initValues = async () => {
     const imagesFromStorage = await AsyncStorage.getItem('@images');
     if (imagesFromStorage) setImages(JSON.parse(imagesFromStorage));
-
-    const albumsFromStorage = await AsyncStorage.getItem('@albums');
-    if (albumsFromStorage) setAlbums(JSON.parse(albumsFromStorage));
   };
 
-  const _setImages = (newImages: ImageItem[]) => {
+  const _setImages = async (newImages: ImageItem[]) => {
     setImages(newImages);
-    AsyncStorage.setItem('@images', JSON.stringify(newImages));
+    await AsyncStorage.setItem('@images', JSON.stringify(newImages));
   };
 
-  const _setAlbums = (newAlbums: AlbumItem[]) => {
+  const _setAlbums = async (newAlbums: AlbumItem[]) => {
     setAlbums(newAlbums);
-    AsyncStorage.setItem('@images', JSON.stringify(newAlbums));
+    await AsyncStorage.setItem('@images', JSON.stringify(newAlbums));
+    console.log(AsyncStorage.getItem('@images'));
   };
 
   const pickImage = async () => {
@@ -78,23 +95,7 @@ export const useGallery = () => {
     ]);
   };
 
-  const filteredImages = images.filter(el => el.albumId === selectedAlbum.id);
-  const imagesWithAddButton = [
-    ...filteredImages,
-    {
-      id: -1,
-      uri: '',
-    },
-  ];
-
-  const openInputModal = () => setIsModalOpen({ ...isModalOpen, isInputModalOpen: true });
-  const closeInputModal = () => setIsModalOpen({ ...isModalOpen, isInputModalOpen: false });
-  const openDropdown = () => setIsModalOpen({ ...isModalOpen, isDropdownOpen: true });
-  const closeDropdown = () => setIsModalOpen({ ...isModalOpen, isDropdownOpen: false });
-  const openBigImgModal = () => setIsModalOpen({ ...isModalOpen, isBigImgModalOpen: true });
-  const closeBigImgModal = () => setIsModalOpen({ ...isModalOpen, isBigImgModalOpen: false });
-
-  const addAlbum = () => {
+  const addAlbum = async () => {
     const newAlbum = {
       id: albums.length + 1,
       title: newAlbumTitle,
@@ -102,8 +103,6 @@ export const useGallery = () => {
     _setAlbums([...albums, newAlbum]);
     setSelectedAlbum(newAlbum);
   };
-
-  const resetNewAlbumTitle = () => setNewAlbumTitle('');
 
   const selectAlbum = (album: AlbumItem) => {
     setSelectedAlbum(album);
@@ -121,7 +120,7 @@ export const useGallery = () => {
         onPress: () => {
           setAlbums(albums.filter(el => el.id !== albumId));
           setSelectedAlbum(defaultAlbum);
-          closeDropdown();
+          setModalState({ ...modalState, isDropdownOpen: false });
         },
       },
     ]);
@@ -151,24 +150,10 @@ export const useGallery = () => {
   return {
     pickImage,
     deleteImage,
-    imagesWithAddButton,
-    selectedAlbum,
-    isModalOpen,
-    openInputModal,
-    closeInputModal,
-    openDropdown,
-    closeDropdown,
-    openBigImgModal,
-    closeBigImgModal,
-    newAlbumTitle,
-    setNewAlbumTitle,
     addAlbum,
-    resetNewAlbumTitle,
-    albums,
     selectAlbum,
     deleteAlbum,
     selectImage,
-    selectedImage,
     moveToPrevImage,
     moveToNextImage,
     showPreviousArrow,

@@ -1,89 +1,88 @@
 import { StyleSheet, SafeAreaView, Platform } from 'react-native';
 import { useGallery } from '../hooks/useGallery';
 import { AlbumItem, ImageItem } from '../types/types';
-
 import MyDropdownPicker from '../components/MyDropdownPicker';
 import TextInputModal from '../components/TextInputModal';
 import BigImageModal from '../components/BigImageModal';
 import ImageList from '../components/ImageList';
+import { useRecoilState } from 'recoil';
+import { modalStateAtom, newAlbumTitleState } from '../store/store';
 
 export default function HomeScreen() {
+  const [newAlbumTitle, setNewAlbumTitle] = useRecoilState(newAlbumTitleState);
+  const [modalState, setModalState] = useRecoilState(modalStateAtom);
+
   const {
+    selectImage,
     pickImage,
     deleteImage,
-    imagesWithAddButton,
-    selectedAlbum,
-    isModalOpen,
-    openInputModal,
-    closeInputModal,
-    newAlbumTitle,
-    setNewAlbumTitle,
-    addAlbum,
-    resetNewAlbumTitle,
-    openDropdown,
-    closeDropdown,
-    albums,
     selectAlbum,
+    addAlbum,
     deleteAlbum,
-    openBigImgModal,
-    closeBigImgModal,
-    selectImage,
-    selectedImage,
     moveToPrevImage,
     moveToNextImage,
     showPreviousArrow,
     showNextArrow,
   } = useGallery();
 
+  const setInputModal = (type: 'open' | 'close') => {
+    setModalState({ ...modalState, isInputModalOpen: type === 'open' });
+  };
+
+  const setDropdownModal = (type: 'open' | 'close') => {
+    setModalState({ ...modalState, isDropdownOpen: type === 'open' });
+  };
+
+  const setBigImgModal = (type: 'open' | 'close') => {
+    setModalState({ ...modalState, isBigImgModalOpen: type === 'open' });
+  };
+
   const onSubmitEditing = () => {
     if (!newAlbumTitle) return;
 
     addAlbum();
-    closeInputModal();
-    resetNewAlbumTitle();
+    setInputModal('close');
+    setNewAlbumTitle('');
   };
 
-  const onPressHeader = () => (isModalOpen.isDropdownOpen ? closeDropdown() : openDropdown());
+  const onPressHeader = () =>
+    modalState.isDropdownOpen ? setDropdownModal('close') : setDropdownModal('open');
 
   const onPressAlbum = (album: AlbumItem) => {
     selectAlbum(album);
-    closeDropdown();
+    setDropdownModal('close');
+  };
+
+  const onPressImage = (image: ImageItem) => {
+    setBigImgModal('open');
+    selectImage(image);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <MyDropdownPicker
-        selectedAlbumTitle={selectedAlbum.title}
-        onPressAddAlbum={openInputModal}
+        isOpen={modalState.isDropdownOpen}
+        onPressAddAlbum={() => setInputModal('open')}
         onPressHeader={onPressHeader}
-        isOpen={isModalOpen.isDropdownOpen}
-        albums={albums}
         onPressAlbum={onPressAlbum}
         onLongPressAlbum={deleteAlbum}
       />
       <TextInputModal
-        isOpen={isModalOpen.isInputModalOpen}
-        onClose={closeInputModal}
-        newAlbumTitle={newAlbumTitle}
-        setNewAlbumTitle={setNewAlbumTitle}
+        isOpen={modalState.isInputModalOpen}
+        onClose={() => setInputModal('close')}
         onSubmitEditing={onSubmitEditing}
       />
       <BigImageModal
-        isOpen={isModalOpen.isBigImgModalOpen}
-        onClose={closeBigImgModal}
-        selectedImage={selectedImage!}
+        isOpen={modalState.isBigImgModalOpen}
+        onClose={() => setBigImgModal('close')}
         onPressLeftButton={moveToPrevImage}
         onPressRightButton={moveToNextImage}
         showPreviousArrow={showPreviousArrow}
         showNextArrow={showNextArrow}
       />
       <ImageList
-        imagesWithAddButton={imagesWithAddButton as ImageItem[]}
         onLongPress={deleteImage}
-        onPressImage={(image: ImageItem) => {
-          openBigImgModal();
-          selectImage(image);
-        }}
+        onPressImage={onPressImage}
         onPressOpenGallery={pickImage}
       />
     </SafeAreaView>

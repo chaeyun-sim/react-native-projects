@@ -1,7 +1,7 @@
 export type ImageItem = {
   id: number;
   uri: string;
-  albumId: number;
+  albumId?: number;
 };
 
 export type AlbumItem = {

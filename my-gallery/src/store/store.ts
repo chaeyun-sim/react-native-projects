@@ -1,13 +1,9 @@
 import { atom } from 'recoil';
 import { AlbumItem, ImageItem } from '../types/types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const imagesState = atom<ImageItem[]>({
   key: 'imagesState',
-  default: [],
-});
-
-export const filteredImagesState = atom<ImageItem[]>({
-  key: 'filteredImagesState',
   default: [],
 });
 
@@ -19,6 +15,19 @@ const defaultAlbum: AlbumItem = {
 export const albumsState = atom<AlbumItem[]>({
   key: 'albumsState',
   default: [defaultAlbum],
+  effects: [
+    ({ setSelf, onSet }) => {
+      const loadPersisted = async () => {
+        const savedAlbums = await AsyncStorage.getItem('@albums');
+        if (savedAlbums != null) setSelf(JSON.parse(savedAlbums));
+      };
+      loadPersisted();
+
+      onSet(newAlbums => {
+        AsyncStorage.setItem('@albums', JSON.stringify(newAlbums));
+      });
+    },
+  ],
 });
 
 export const selectedAlbumState = atom<AlbumItem>({
@@ -41,6 +50,15 @@ export const newAlbumTitleState = atom<string>({
 });
 
 export const imagesWithAddButtonState = atom<ImageItem[]>({
-  key: 'imagesWithAddButton',
+  key: 'imagesWithAddButtonState',
   default: [],
+});
+
+export const modalStateAtom = atom({
+  key: 'modalState',
+  default: {
+    isInputModalOpen: false,
+    isDropdownOpen: false,
+    isBigImgModalOpen: false,
+  },
 });

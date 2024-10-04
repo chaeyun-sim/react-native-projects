@@ -1,27 +1,30 @@
 import { Dimensions, FlatList } from 'react-native';
 import { ImageItem } from '../types/types';
 import RenderImage from './RenderImage';
+import { useRecoilValue } from 'recoil';
+import { imagesWithAddButtonState } from '../store/store';
 
 interface ImageListProps {
-  imagesWithAddButton: ImageItem[];
   onLongPress: (id: number) => void;
   onPressImage: (image: ImageItem) => void;
   onPressOpenGallery: () => void;
 }
 
-export default ({ imagesWithAddButton, ...rest }: ImageListProps) => {
+export default (props: ImageListProps) => {
   const width = Dimensions.get('screen').width;
   const minColumnSize = width > 500 ? 200 : 120;
   const numColumns = Math.floor(width / minColumnSize);
 
+  const imagesWithAddButton = useRecoilValue(imagesWithAddButtonState);
+
   return (
     <FlatList
-      data={imagesWithAddButton as ImageItem[]}
+      data={imagesWithAddButton}
       renderItem={({ item }) => (
         <RenderImage
           item={item}
           numColumns={numColumns}
-          {...rest}
+          {...props}
         />
       )}
       keyExtractor={item => String(item.id)}

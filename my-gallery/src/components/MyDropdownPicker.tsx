@@ -1,28 +1,29 @@
 import { Text, TouchableOpacity, View } from 'react-native';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { AlbumItem } from '../types/types';
+import { useRecoilValue } from 'recoil';
+import { albumsState, modalStateAtom, selectedAlbumState } from '../store/store';
 
 const HEADER_HEIGHT = 50;
 
 interface MyDropdownPickerProps {
-  selectedAlbumTitle: string;
   onPressAddAlbum: () => void;
   onPressHeader: () => void;
   isOpen: boolean;
-  albums: AlbumItem[];
   onPressAlbum: (value: AlbumItem) => void;
   onLongPressAlbum: (id: number) => void;
 }
 
 export default ({
   isOpen,
-  selectedAlbumTitle,
   onPressAddAlbum,
   onPressHeader,
-  albums,
   onPressAlbum,
   onLongPressAlbum,
 }: MyDropdownPickerProps) => {
+  const selectedAlbum = useRecoilValue(selectedAlbumState);
+  const albums = useRecoilValue(albumsState);
+
   return (
     <View>
       <TouchableOpacity
@@ -37,7 +38,7 @@ export default ({
           borderBottomColor: 'lightgrey',
         }}
       >
-        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{selectedAlbumTitle}</Text>
+        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{selectedAlbum.title}</Text>
         <SimpleLineIcons
           name={isOpen ? 'arrow-up' : 'arrow-down'}
           size={12}
@@ -83,7 +84,7 @@ export default ({
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ fontWeight: album.title === selectedAlbumTitle ? 'bold' : 'normal' }}>
+              <Text style={{ fontWeight: album.title === selectedAlbum.title ? 'bold' : 'normal' }}>
                 {album.title}
               </Text>
             </TouchableOpacity>
