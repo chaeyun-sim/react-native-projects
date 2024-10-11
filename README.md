@@ -9,3 +9,7 @@
 - [PR #6](https://github.com/chaeyun-sim/react-native-projects/pull/6) | [나만의 갤러리](https://github.com/chaeyun-sim/react-native-projects/tree/main/my-gallery)
 - [PR #4](https://github.com/chaeyun-sim/react-native-projects/pull/4) | [카카오버스 클론코딩](https://github.com/chaeyun-sim/react-native-projects/tree/main/kakao-bus)
 - [PR #5](https://github.com/chaeyun-sim/react-native-projects/pull/5) | [번역 앱](https://github.com/chaeyun-sim/react-native-projects/tree/main/translation-app)
+
+##
+
+- [PR #7](https://github.com/chaeyun-sim/react-native-projects/pull/7) | [배경화면 앱](https://github.com/chaeyun-sim/react-native-projects/tree/main/wall-paper-app)
