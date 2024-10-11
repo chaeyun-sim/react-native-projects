@@ -8,15 +8,21 @@ import Typography from '../components/common/Typography';
 import Icons from '../components/common/Icons';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
+import { useDispatch, useSelector } from 'react-redux';
+import { onClickFavorite } from '../actions/favorite';
 
 export default () => {
   const { width } = useWindowDimensions();
   const navigation = useNavigation();
   const route = useRoute();
+  const dispatch = useDispatch();
 
   const [isDownloading, setIsDownloading] = useState(false);
-  const [isClicked, setIsClicked] = useState(false);
 
+  const isFavorite = useSelector(state => {
+    return state.favorite.favoriteList.filter(item => item === route.params.url).length > 0;
+  });
+  const onPressFavorite = () => dispatch(onClickFavorite(route.params.url));
   const onPressBack = () => navigation.goBack();
 
   const onPressDownload = async () => {
@@ -53,24 +59,21 @@ export default () => {
   return (
     <View style={{ flex: 1 }}>
       <Header>
-        <Header.Group>
-          <Header.Icon
-            iconName='arrow-back'
-            onPress={onPressBack}
-          />
-          <Header.Title title='IMAGE DETAIL' />
-        </Header.Group>
         <Header.Icon
-          iconName={isClicked ? 'star' : 'star-outline'}
+          iconName='arrow-back'
+          onPress={onPressBack}
+        />
+        <Header.Title title='IMAGE DETAIL' />
+        <Header.Icon
+          iconName={isFavorite ? 'heart' : 'heart-outline'}
           iconSize={24}
-          onPress={() => setIsClicked(!isClicked)}
+          onPress={onPressFavorite}
         />
       </Header>
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ flex: 1 }}>
         <ExternalImages
           url={route.params.url}
-          width={width}
-          height={width * 1.5}
+          style={{ flex: 1 }}
         />
       </View>
 
