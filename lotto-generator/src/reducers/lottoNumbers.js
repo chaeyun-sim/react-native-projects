@@ -1,4 +1,4 @@
-import { CREATE_NEW_NUMBERS } from '../actions/lottoNumbers';
+import { CLEAR_HISTORY, CREATE_NEW_NUMBERS } from '../actions/lottoNumbers';
 
 const initialState = {
   currentNumber: [],
@@ -18,6 +18,11 @@ export const lottoNumberReducer = (state = initialState, action) => {
           numbers: action.numbers,
         },
       ],
+    };
+  } else if (action.type === CLEAR_HISTORY) {
+    return {
+      ...state,
+      history: [],
     };
   }
 
