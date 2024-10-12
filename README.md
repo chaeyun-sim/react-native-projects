@@ -13,3 +13,4 @@
 ##
 
 - [PR #7](https://github.com/chaeyun-sim/react-native-projects/pull/7) | [배경화면 앱](https://github.com/chaeyun-sim/react-native-projects/tree/main/wall-paper-app)
+- [PR #8](https://github.com/chaeyun-sim/react-native-projects/pull/8) | [로또 번호 생성기](https://github.com/chaeyun-sim/react-native-projects/tree/main/lotto-generator)
