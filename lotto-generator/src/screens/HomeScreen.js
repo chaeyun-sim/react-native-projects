@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View } from 'react-native';
 import Header from '../components/Header/Header';
 import Spacer from '../components/common/Spacer';
 import Button from '../components/common/Button';
@@ -8,19 +7,11 @@ import LottoNumberView from '../components/LottoNumberView';
 import { useDispatch, useSelector } from 'react-redux';
 import { createNewNumbers } from '../actions/lottoNumbers';
 
-export default props => {
+export default () => {
   const dispatch = useDispatch();
   const numbers = useSelector(state => state.numbers.currentNumber);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const onPressGetNumber = () => {
-    setIsLoading(true);
-    dispatch(createNewNumbers());
-
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-  };
+  const onPressGetNumber = () => dispatch(createNewNumbers());
 
   return (
     <View style={{ flex: 1 }}>
@@ -50,16 +41,12 @@ export default props => {
         <Spacer space={20} />
         <Button onPress={onPressGetNumber}>
           <View style={{ backgroundColor: 'black', paddingVertical: 24, alignItems: 'center' }}>
-            {isLoading ? (
-              <ActivityIndicator color='white' />
-            ) : (
-              <Typography
-                color='white'
-                fontSize={18}
-              >
-                로또 번호 추출하기
-              </Typography>
-            )}
+            <Typography
+              color='white'
+              fontSize={18}
+            >
+              로또 번호 추출하기
+            </Typography>
           </View>
         </Button>
       </View>

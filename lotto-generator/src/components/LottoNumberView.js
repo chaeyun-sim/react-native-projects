@@ -29,7 +29,6 @@ export default ({ numbers, isHistory }) => {
     });
 
     Animated.parallel(animations).start();
-
     setTimeout(() => setAnimationComplete(true), 800);
   }, [numbers]);
 
@@ -49,7 +48,7 @@ export default ({ numbers, isHistory }) => {
   return (
     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
       {isHistory
-        ? numbers.map((num, i) => (
+        ? numbers.map(num => (
             <View
               key={num}
               style={{
