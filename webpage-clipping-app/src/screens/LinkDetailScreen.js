@@ -7,6 +7,8 @@ export default () => {
   const route = useRoute();
   const navigation = useNavigation();
 
+  const title = route.params.item.title;
+
   const onPressBack = () => navigation.goBack();
 
   return (
@@ -16,7 +18,7 @@ export default () => {
           iconName='arrow-back'
           onPress={onPressBack}
         />
-        <Header.Title title={route.params.item.title} />
+        <Header.Title title={title.length > 15 ? title.slice(0, 15) + '...' : title} />
         <Header.Space space={28} />
       </Header>
 
