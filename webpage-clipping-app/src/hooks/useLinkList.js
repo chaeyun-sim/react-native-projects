@@ -5,10 +5,10 @@ export const useLinkList = () => {
   const [linkList, setLinkList] = useRecoilState(atomLinkList);
 
   const deleteLink = itemToDelete => {
-    setLinkList(currentList => ({
-      ...currentList,
-      list: currentList.list.filter(item => item.createdAt === itemToDelete.createdAt),
-    }));
+    setLinkList(currentList => {
+      if (!Array.isArray(currentList)) return currentList;
+      return currentList.filter(item => item.createdAt !== itemToDelete.createdAt);
+    });
   };
 
   return {
