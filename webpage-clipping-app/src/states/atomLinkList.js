@@ -1,4 +1,4 @@
-import { atom } from 'recoil';
+import { atom, useRecoilState } from 'recoil';
 import { getStorage, removeStorage, setStorage } from '../utils/AsyncStorageUtils';
 
 const asyncStorageEffect =

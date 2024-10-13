@@ -1,22 +1,21 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
-import { atomLinkList } from 'src/states/atomLinkList';
+import { useState, useEffect, useCallback } from 'react';
+import { useLinkList } from 'src/hooks/useLinkList';
 import { getStorage } from 'src/utils/AsyncStorageUtils';
 
 export const RecoilCustomPersist = ({ children }) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const setList = useSetRecoilState(atomLinkList);
+  const { setLinkList } = useLinkList();
 
   const loadData = useCallback(async () => {
     try {
       const data = await getStorage('MAIN/LINK_LIST');
-      if (data) setList(data);
+      if (data) setLinkList(data);
       setIsLoaded(true);
     } catch (error) {
       console.error('Error loading data:', error);
       setIsLoaded(true);
     }
-  }, [setList]);
+  }, [setLinkList]);
 
   useEffect(() => {
     let isMounted = true;

@@ -7,12 +7,11 @@ import Button from '../components/common/Button';
 import Typography from '../components/common/Typography';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Spacer from '../components/common/Spacer';
-import { useSetRecoilState } from 'recoil';
-import { atomLinkList } from '../states/atomLinkList';
 import { getOpenGraphData } from 'src/utils/OpenGraphTagUtils';
 import ExternalImages from 'src/components/common/ExternalImages';
 import { getClipboardString } from 'src/utils/ClipboardUtils';
 import Icons from 'src/components/common/Icons';
+import { useLinkList } from 'src/hooks/useLinkList';
 
 export default () => {
   const navigation = useNavigation();
@@ -22,8 +21,7 @@ export default () => {
   const [url, setUrl] = useState('');
   const [metaData, setMetaData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const updateList = useSetRecoilState(atomLinkList);
+  const { setLinkList } = useLinkList();
 
   useEffect(() => {
     onGetClipboardString();
@@ -41,16 +39,14 @@ export default () => {
   const onPressClose = () => navigation.goBack();
   const onPressSave = () => {
     if (!url) return;
-    updateList(prev => {
-      const list = {
+    setLinkList(prev => {
+      const newItem = {
         title: metaData.title,
         image: metaData.image,
         link: url,
         createdAt: new Date().toISOString(),
       };
-      return {
-        list: [...prev.list, list],
-      };
+      return Array.isArray(prev) ? [...prev, newItem] : [newItem];
     });
     setUrl('');
     navigation.goBack();
@@ -63,7 +59,6 @@ export default () => {
     setMetaData(result);
 
     setIsLoading(false);
-    setIsSubmitted(true);
   }, [url]);
 
   const onPressReset = () => {
@@ -121,11 +116,14 @@ export default () => {
           </View>
         )}
         {metaData && !isLoading && (
-          <View style={{ borderWidth: 1, borderRadius: 4, borderColor: 'gray' }}>
+          <View
+            style={{ borderWidth: 1, borderRadius: 4, borderColor: 'gray', overflow: 'hidden' }}
+          >
             <ExternalImages
               url={metaData.image}
-              width={width - 48}
+              width={width - 50}
               height={(width - 48) * 0.5}
+              style={{ borderTopRightRadius: 2, borderTopLeftRadius: 2 }}
             />
             <View style={{ paddingHorizontal: 12, paddingVertical: 8 }}>
               <Spacer space={10} />
