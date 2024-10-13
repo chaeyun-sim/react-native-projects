@@ -16,7 +16,7 @@ export default () => {
           iconName='arrow-back'
           onPress={onPressBack}
         />
-        <Header.Title title='LINK DETAIL' />
+        <Header.Title title={route.params.item.title} />
         <Header.Space space={28} />
       </Header>
 
