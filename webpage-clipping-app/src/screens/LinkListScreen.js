@@ -1,4 +1,4 @@
-import { useMemo, useRef, useCallback, useImperativeHandle } from 'react';
+import { useMemo, useCallback } from 'react';
 import { SectionList, View, Animated, Alert } from 'react-native';
 import Typography from '../components/common/Typography';
 import Button from '../components/common/Button';
@@ -65,14 +65,6 @@ export default () => {
   );
 
   const renderRightActions = (item, index) => {
-    const swipeableRef = useRef();
-
-    useImperativeHandle(ref, () => ({
-      close: () => {
-        swipeableRef.current?.close();
-      },
-    }));
-
     return (
       <View
         style={{
