@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { ActivityIndicator, FlatList, RefreshControl, View } from 'react-native';
+import { ActivityIndicator, FlatList, TouchableOpacity, RefreshControl, View } from 'react-native';
 import Header from '../components/common/Header';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNewsList } from '../actions/news';
@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import Feather from '@expo/vector-icons/Feather';
 import NewsItem from '../components/NewsItem';
 import EmptyNews from '../components/EmptyNews';
+import Icons from '../components/common/Icons';
 
 export default () => {
   const navigation = useNavigation();
@@ -24,7 +25,7 @@ export default () => {
   const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
-    if (data.items) {
+    if (query && data.items) {
       if (page === 1) {
         setNewsList(data.items);
       } else {
@@ -108,6 +109,11 @@ export default () => {
     }
   };
 
+  const onReset = () => {
+    setQuery('');
+    setNewsList([]);
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <Header style={{ flex: 1 }}>
@@ -131,7 +137,17 @@ export default () => {
             onChangeText={setQuery}
             placeholder='뉴스 검색어를 입력해 주세요.'
             onSubmitEditing={onSubmitEditing}
+            style={{ paddingRight: 30 }}
           />
+          <TouchableOpacity
+            style={{ position: 'absolute', top: 7, right: 10 }}
+            onPress={onReset}
+          >
+            <Icons
+              name='close'
+              size={24}
+            />
+          </TouchableOpacity>
         </View>
         <FlatList
           style={{ flex: 1 }}
