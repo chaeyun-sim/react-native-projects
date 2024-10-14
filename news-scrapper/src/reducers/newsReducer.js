@@ -35,7 +35,7 @@ export const newsReducer = (state = initialState, action) => {
         loading: false,
       };
 
-    case CLIP_NEWS_ITEM: {
+    case CLIP_NEWS_ITEM:
       const hasFavoriteList = state.favoriteNews.filter(item => item.link === action.newsItem.link);
       if (hasFavoriteList.length) {
         return {
@@ -48,7 +48,6 @@ export const newsReducer = (state = initialState, action) => {
         ...state,
         favoriteNews: [...state.favoriteNews, action.newsItem],
       };
-    }
 
     case CLIPPED_TAB_FOCUS:
       return {

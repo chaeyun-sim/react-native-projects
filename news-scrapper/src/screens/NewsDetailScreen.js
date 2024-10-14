@@ -13,9 +13,13 @@ export default () => {
 
   const onPressBack = () => navigation.goBack();
   const onPressFavorite = () => dispatch(clipNewsItem(route.params.item));
+  console.log(favoriteNews);
 
   const favoriteNews = useSelector(state => state.news.favoriteNews);
-  const isClipped = favoriteNews.findIndex(item => item.link === route.params.item.link);
+  const isClipped = favoriteNews
+    ? favoriteNews.findIndex(item => item.link === route.params.item.link)
+    : -1;
+  console.log(favoriteNews);
 
   return (
     <View style={{ flex: 1 }}>
@@ -40,6 +44,8 @@ export default () => {
         startInLoadingState
         style={{ flex: 1 }}
         source={{ uri: route.params.item.link }}
+        mediaPlaybackRequiresUserAction
+        originWhitelist={['*']}
       />
     </View>
   );
