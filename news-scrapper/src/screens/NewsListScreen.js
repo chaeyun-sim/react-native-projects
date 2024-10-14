@@ -19,14 +19,20 @@ export default () => {
   const [showColon, setShowColon] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [newsList, setNewsList] = useState([]);
-  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     if (data.items) {
-      setNewsList(newsList.concat(data.items?.slice(limit - 10, limit)));
+      if (page === 1) {
+        setNewsList(data.items);
+      } else {
+        setNewsList(prev => [...prev, ...data.items]);
+      }
+      setHasMore(data.items.length > 0);
     }
-  }, [data, limit]);
+  }, [data, page]);
 
   useEffect(() => {
     const updateTime = () => {
@@ -49,27 +55,56 @@ export default () => {
     };
   }, [showColon]);
 
-  const onDispatch = () => dispatch(getNewsList(query));
+  const onDispatch = useCallback(
+    pageNumber => {
+      if (!query || isLoading || !hasMore) return;
+      setIsLoading(true);
+      dispatch(getNewsList(query, pageNumber))
+        .then(result => {
+          if (pageNumber === 1) {
+            setNewsList(result.items);
+          } else {
+            setNewsList(prevList => {
+              const newItems = result.items.filter(
+                item => !prevList.some(prevItem => prevItem.link === item.link)
+              );
+              return [...prevList, ...newItems];
+            });
+          }
+          setHasMore(result.items.length === 10);
+          setIsLoading(false);
+        })
+        .catch(() => setIsLoading(false));
+    },
+    [query, isLoading, hasMore, dispatch]
+  );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    setNewsList(data.items.slice(0, limit));
+    setPage(1);
+    setNewsList([]);
+    setHasMore(true);
+    onDispatch(1);
     setTimeout(() => setRefreshing(false), 100);
-  }, [query]);
+  }, [onDispatch]);
 
   const onPressItem = item => navigation.navigate('NewsDetail', { item });
 
   const onSubmitEditing = useCallback(() => {
     if (!query) return;
     setNewsList([]);
-    onDispatch();
-  });
+    setPage(1);
+    setHasMore(true);
+    onDispatch(1);
+  }, [query, onDispatch]);
 
   const onEndReached = () => {
     if (!isLoading) {
-      setIsLoading(true);
-      setLimit(limit + 10);
-      setIsLoading(false);
+      setPage(prevPage => {
+        const nextPage = prevPage + 1;
+        onDispatch(nextPage);
+        return nextPage;
+      });
     }
   };
 

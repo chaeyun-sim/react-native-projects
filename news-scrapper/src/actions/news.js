@@ -4,11 +4,13 @@ export const GET_NEWS_LIST_REQUEST = 'GET_NEWS_LIST_REQUEST';
 export const GET_NEWS_LIST_SUCCESS = 'GET_NEWS_LIST_SUCCESS';
 export const GET_NEWS_LIST_FAILURE = 'GET_NEWS_LIST_FAILURE';
 
-export const getNewsList = query => dispatch => {
+export const getNewsList = (query, pageNumber) => dispatch => {
   dispatch({ type: GET_NEWS_LIST_REQUEST });
 
-  fetch(
-    `https://openapi.naver.com/v1/search/news.json?query=${encodeURIComponent(query)}&display=100`,
+  return fetch(
+    `https://openapi.naver.com/v1/search/news.json?query=${encodeURIComponent(
+      query
+    )}&display=10&start=${(pageNumber - 1) * 10 + 1}`,
     {
       headers: {
         'X-Naver-Client-Id': REACT_NATIVE_NAVER_CLIENT_ID,
@@ -17,10 +19,13 @@ export const getNewsList = query => dispatch => {
     }
   )
     .then(result => result.json())
-    .then(result => dispatch({ type: GET_NEWS_LIST_SUCCESS, result }))
+    .then(result => {
+      dispatch({ type: GET_NEWS_LIST_SUCCESS, result });
+      return result;
+    })
     .catch(err => {
       dispatch({ type: GET_NEWS_LIST_FAILURE });
-      return err;
+      throw err;
     });
 };
 
