@@ -7,15 +7,21 @@ export const GET_NEWS_LIST_FAILURE = 'GET_NEWS_LIST_FAILURE';
 export const getNewsList = query => dispatch => {
   dispatch({ type: GET_NEWS_LIST_REQUEST });
 
-  fetch(`https://openapi.naver.com/v1/search/news.json?query=${encodeURIComponent(query)}`, {
-    headers: {
-      'X-Naver-Client-Id': REACT_NATIVE_NAVER_CLIENT_ID,
-      'X-Naver-Client-Secret': REACT_NATIVE_NAVER_CLIENT_SECRET,
-    },
-  })
+  fetch(
+    `https://openapi.naver.com/v1/search/news.json?query=${encodeURIComponent(query)}&display=100`,
+    {
+      headers: {
+        'X-Naver-Client-Id': REACT_NATIVE_NAVER_CLIENT_ID,
+        'X-Naver-Client-Secret': REACT_NATIVE_NAVER_CLIENT_SECRET,
+      },
+    }
+  )
     .then(result => result.json())
     .then(result => dispatch({ type: GET_NEWS_LIST_SUCCESS, result }))
-    .catch(err => dispatch({ type: GET_NEWS_LIST_FAILURE }));
+    .catch(err => {
+      dispatch({ type: GET_NEWS_LIST_FAILURE });
+      return err;
+    });
 };
 
 export const CLIP_NEWS_ITEM = 'CLIP_NEWS_ITEM';

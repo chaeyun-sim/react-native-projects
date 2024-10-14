@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { FlatList, RefreshControl, View } from 'react-native';
+import { ActivityIndicator, FlatList, RefreshControl, View } from 'react-native';
 import Header from '../components/common/Header';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNewsList } from '../actions/news';
@@ -12,14 +12,22 @@ import EmptyNews from '../components/EmptyNews';
 export default () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const newsList = useSelector(state => state.news.newsList);
+  const data = useSelector(state => state.news.newsList);
+
   const [query, setQuery] = useState('');
-  // TODO: 고도화 시 적용
   const [currentTime, setCurrentTime] = useState('');
   const [showColon, setShowColon] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [newsList, setNewsList] = useState([]);
+  const [limit, setLimit] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // TODO: 고도화 시 적용
+  useEffect(() => {
+    if (data.items) {
+      setNewsList(newsList.concat(data.items?.slice(limit - 10, limit)));
+    }
+  }, [data, limit]);
+
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -28,13 +36,11 @@ export default () => {
       setCurrentTime(`${hours}${showColon ? ':' : ' '}${minutes}`);
     };
 
-    const toggleColon = () => {
-      setShowColon(prev => !prev);
-    };
+    const toggleColon = () => setShowColon(prev => !prev);
 
     updateTime();
-    const timeInterval = setInterval(updateTime, 500);
 
+    const timeInterval = setInterval(updateTime, 500);
     const colonInterval = setInterval(toggleColon, 500);
 
     return () => {
@@ -43,24 +49,34 @@ export default () => {
     };
   }, [showColon]);
 
-  // TODO: 고도화 시 적용
+  const onDispatch = () => dispatch(getNewsList(query));
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    dispatch(getNewsList(query));
+    setNewsList(data.items.slice(0, limit));
     setTimeout(() => setRefreshing(false), 100);
-  }, [dispatch, query]);
+  }, [query]);
 
   const onPressItem = item => navigation.navigate('NewsDetail', { item });
+
   const onSubmitEditing = useCallback(() => {
     if (!query) return;
-    dispatch(getNewsList(query));
+    setNewsList([]);
+    onDispatch();
   });
+
+  const onEndReached = () => {
+    if (!isLoading) {
+      setIsLoading(true);
+      setLimit(limit + 10);
+      setIsLoading(false);
+    }
+  };
 
   return (
     <View style={{ flex: 1 }}>
       <Header style={{ flex: 1 }}>
         <Header.Title title='오늘의 뉴스' />
-        {/* // TODO: 고도화 시 적용 */}
         <Header.Group style={{ gap: 6, justifyContent: 'flex-end' }}>
           <Feather
             name='clock'
@@ -82,10 +98,9 @@ export default () => {
             onSubmitEditing={onSubmitEditing}
           />
         </View>
-        {/*  TODO: 끌어당기면 업데이트 만들기 */}
         <FlatList
           style={{ flex: 1 }}
-          data={newsList.items}
+          data={newsList}
           renderItem={({ item }) => (
             <NewsItem
               item={item}
@@ -99,6 +114,9 @@ export default () => {
             />
           }
           ListEmptyComponent={EmptyNews}
+          onEndReached={onEndReached}
+          onEndReachedThreshold={0.6}
+          ListFooterComponent={() => isLoading && <ActivityIndicator />}
         />
       </View>
     </View>
